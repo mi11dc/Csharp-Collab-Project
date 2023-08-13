@@ -1,0 +1,28 @@
+﻿@model TMS.Models.ViewModel.VenueDto
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Venue</h2>
+<form action="/Venue/Update/@Model.Id" method="POST">
+    <div style="display:none;">
+        <input type="text" name="VenueId" value="@Model.Id" />
+    </div>
+    <div>
+        <label>Venue Name: </label> <input type="text" name="Name" id="Name" value="@Model.Name" />
+    </div>
+    <div>
+        <label>Base Price: </label> <input type="text" name="BasePrice" id="BasePrice" value="@Model.BasePrice" />
+    </div>
+    <div>
+        <label>Location:</label> <input type="text" name="Location" id="Location" value="@Model.Location" />
+    </div>
+
+    <div>
+        <label>Country</label> <input type="text" name="Country" id="Country" value="@Model.Country" />
+    </div>
+    <div>
+        <input type="submit" value="Update Venue" />
+    </div>
+</form>
+

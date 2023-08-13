@@ -1,0 +1,12 @@
+﻿﻿@model TMS.Models.MatchDto
+
+@{
+    ViewBag.Title = "DeleteConfirm";
+}
+
+<h2>Are you sure you want to delete this Match?</h2>
+<a href="/Match/List">Cancel</a>
+<h2>@Model.Team1 Vs. @Model.Team2</h2>
+<form action="/Match/Delete/@Model.Id" method="POST">
+    <input type="submit" value="Confirm Delete" />
+</form>

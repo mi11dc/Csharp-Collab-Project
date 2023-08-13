@@ -180,6 +180,12 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MatchController.cs" />
+    <Compile Include="Controllers\MatchDataController.cs" />
+    <Compile Include="Controllers\TeamController.cs" />
+    <Compile Include="Controllers\TeamDataController.cs" />
+    <Compile Include="Controllers\VenueController.cs" />
+    <Compile Include="Controllers\VenueDataController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -229,21 +235,30 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\db\AgentVenuesAssosiation.cs" />
-    <Compile Include="Models\db\Match.cs" />
-    <Compile Include="Models\db\Team.cs" />
-    <Compile Include="Models\db\TeamPlayerAssociation.cs" />
-    <Compile Include="Models\db\Tournament.cs" />
-    <Compile Include="Models\db\TournamentTeamAssociation.cs" />
-    <Compile Include="Models\db\TournamentVenueAssociation.cs" />
-    <Compile Include="Models\db\UserDetails.cs" />
-    <Compile Include="Models\db\Venue.cs" />
+    <Compile Include="Models\DB\AgentVenuesAssosiation.cs" />
+    <Compile Include="Models\DB\Match.cs" />
+    <Compile Include="Models\DB\Team.cs" />
+    <Compile Include="Models\DB\TeamPlayerAssociation.cs" />
+    <Compile Include="Models\DB\Tournament.cs" />
+    <Compile Include="Models\DB\TournamentTeamAssociation.cs" />
+    <Compile Include="Models\DB\TournamentVenueAssociation.cs" />
+    <Compile Include="Models\DB\UserDetails.cs" />
+    <Compile Include="Models\DB\Venue.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModel\MatchDto.cs" />
+    <Compile Include="Models\ViewModel\TeamDto.cs" />
+    <Compile Include="Models\ViewModel\UpdateMatch.cs" />
+    <Compile Include="Models\ViewModel\VenueDto.cs" />
+    <Compile Include="Models\ViewModel\ViewMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\aspnet-TMS-20230802113913.mdf" />
+    <Content Include="App_Data\aspnet-TMS-20230802113913_log.ldf">
+      <DependentUpon>aspnet-TMS-20230802113913.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -314,9 +329,25 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Match\List.cshtml" />
+    <Content Include="Views\Match\Details.cshtml" />
+    <Content Include="Views\Match\DeleteConfirm.cshtml" />
+    <Content Include="Views\Match\Error.cshtml" />
+    <Content Include="Views\Match\New.cshtml" />
+    <Content Include="Views\Match\Edit.cshtml" />
+    <Content Include="Views\Venue\List.cshtml" />
+    <Content Include="Views\Venue\DeleteConfirm.cshtml" />
+    <Content Include="Views\Venue\Error.cshtml" />
+    <Content Include="Views\Venue\New.cshtml" />
+    <Content Include="Views\Venue\Edit.cshtml" />
+    <Content Include="Views\Team\List.cshtml" />
+    <Content Include="Views\Team\New.cshtml" />
+    <Content Include="Views\Team\DeleteConfirm.cshtml" />
+    <Content Include="Views\Team\Edit.cshtml" />
+    <Content Include="Views\Team\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="Views\MatchData\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
