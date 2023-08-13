@@ -5,10 +5,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using TMS.Models;
+using System.Collections.Generic;
 
 namespace TMS.Controllers
 {
@@ -134,12 +136,20 @@ namespace TMS.Controllers
             }
         }
 
-        //
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            UserRoleProvider urp = new UserRoleProvider();
+            List<string> lststring = new List<string>();
+
+            lststring.Add(RoleNames.Admin);
+
+            RegisterViewModel viewModel = new RegisterViewModel();
+            viewModel.ListRoles = new List<DropdownViewModelForRole>();
+            viewModel.ListRoles = urp.GetAllRoles(lststring.ToArray());
+
+            return View(viewModel);
         }
 
         //
@@ -155,6 +165,8 @@ namespace TMS.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    UserManager.AddToRole(user.Id, model.Role);
+
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771

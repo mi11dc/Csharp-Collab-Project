@@ -79,6 +79,11 @@ namespace TMS.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        public string Role { get; set; }
+
+        public List<DropdownViewModelForRole> ListRoles { get; set; }
     }
 
     public class ResetPasswordViewModel
