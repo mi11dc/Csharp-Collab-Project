@@ -1,0 +1,38 @@
+﻿@model TMS.Models.MatchDto
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>Create Match</h2>
+<form action="/Match/Create" method="POST">
+    <div>
+        <label>Ho@*me Team: </label><input type="number" name="Team1Id" id="Team1Id" value="" />
+        <select name="TeamId">
+            @foreach (var Team in Model.TeamId)
+            {
+                <option value="@Team.HomeTeamId">@Team.HomeTeamId</option>
+
+            }
+        </select>*@
+    </div>
+    <div>
+        <label>Opponent Team:</label> <input type="text" name="Team2Id" id="Team2Id" value="" />
+    </div>
+
+    <div>
+        <label>DateTime:</label> <input type="datetime-local" name="DateTime" id="DateTime" value="" />
+    </div>
+    <div>
+        <label>Venue :</label>
+ @*       <select name="VenueId">
+            @foreach (var Venue in Model.VenueOptions)
+            {
+                <option value="@Venue.VenueId">@Venue.VenueName</option>
+
+            }
+        </select>*@
+    </div>
+    <input type="submit" value="Add Match" />
+
+</form>
+

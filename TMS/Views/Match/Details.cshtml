@@ -1,0 +1,17 @@
+﻿﻿@model TMS.Models.MatchDto
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<a href="/Match/List">Go to Matches</a>
+<br />
+<a href="/Match/Edit/@Model.Id">Update</a>
+<br />
+
+<a style="color:#ab2020;" href="/Match/DeleteConfirm/@Model.Id">Delete</a>
+<h2>Home Team : @Model.Team1</h2>
+<div>Opponent Team : @Model.Team2</div>
+<div>Date : @Model.DateTime</div>
+<div>Venue: @Model.TournamentVenue</div>

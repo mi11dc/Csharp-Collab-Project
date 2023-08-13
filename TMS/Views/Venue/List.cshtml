@@ -1,0 +1,22 @@
+﻿﻿@model IEnumerable<TMS.Models.ViewModel.VenueDto>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+<a href="/Venue/New">New Venue</a>
+
+@foreach (var Venue in Model)
+{
+    <h2>@Venue.Name</h2>
+    <div>Base Price: @Venue.BasePrice</div>
+    <div>Location: @Venue.Location</div>
+    <div>Country: @Venue.Country</div>
+
+    <div><a href="/Venue/Edit/@Venue.Id">Edit</a></div>
+    <div><a href="/Venue/DeleteConfirm/@Venue.Id">Delete</a></div>
+
+
+    // <a href="@Url.Action("ListMatchesForVenue", "Match", new { venueId = Venue.VenueId })">View Matches</a>
+}
+

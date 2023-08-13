@@ -1,0 +1,22 @@
+﻿﻿@model IEnumerable<TMS.Models.ViewModel.TeamDto>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+<a href="/Team/New">New Team</a>
+
+@foreach (var Team in Model)
+{
+    <h2>@Team.Name</h2>
+    <div>@Team.Country</div>
+    <div>@Team.OwnerId</div>
+    <div>@Team.UserDetails</div>
+
+    <div><a href="/Team/Edit/@Team.Id">Edit</a></div>
+    <div><a href="/Team/DeleteConfirm/@Team.Id">Delete</a></div>
+
+
+    //<a href="@Url.Action("ListMatchesForTeam", "Match", new { TeamId = Team.TeamId})">View Matches</a>
+
+}

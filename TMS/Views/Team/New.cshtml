@@ -1,0 +1,26 @@
+﻿@model IEnumerable<TMS.Models.ViewModel.TeamDto>
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>Create Team</h2>
+<form action="/Team/Create" method="POST">
+    <div>
+        <label>Team Name: </label> <input type="text" name="Name" id="Name" value="" />
+    </div>
+
+    <div>
+        <label>Country: </label> <input type="text" name="Country" id="Country" value="" />
+    </div>
+
+    <div>
+        <label>Owner: </label> <input type="number" name="Owner" id="Owner" value="" />
+    </div>
+
+    <div>
+        <label>UserDetails: </label> <input type="text" name="UserDetails" id="UserDetails" value="" />
+    </div>
+
+    <input type="submit" value="Add Team" />
+
+</form>

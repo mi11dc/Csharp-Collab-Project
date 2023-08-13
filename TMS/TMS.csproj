@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,6 +100,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.AspNet.WebApi.Client.5.2.9\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -108,6 +110,7 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+<<<<<<< HEAD
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -135,10 +138,36 @@
       <HintPath>packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+=======
+>>>>>>> dev-akul
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.Core.5.2.9\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.WebHost.5.2.9\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Mvc.5.2.9\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Razor.3.2.9\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -150,6 +179,10 @@
     <Reference Include="System.Web.Optimization">
       <HintPath>packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
+<<<<<<< HEAD
+=======
+    <Reference Include="System.Xml.Linq" />
+>>>>>>> dev-akul
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -180,6 +213,12 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MatchController.cs" />
+    <Compile Include="Controllers\MatchDataController.cs" />
+    <Compile Include="Controllers\TeamController.cs" />
+    <Compile Include="Controllers\TeamDataController.cs" />
+    <Compile Include="Controllers\VenueController.cs" />
+    <Compile Include="Controllers\VenueDataController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -238,13 +277,21 @@
     <Compile Include="Models\DB\TournamentVenueAssociation.cs" />
     <Compile Include="Models\DB\UserDetails.cs" />
     <Compile Include="Models\DB\Venue.cs" />
+<<<<<<< HEAD
     <Compile Include="Models\General\APICall.cs" />
     <Compile Include="Models\General\DropdownViewModel.cs" />
     <Compile Include="Models\General\General.cs" />
     <Compile Include="Models\General\RolesEnum.cs" />
     <Compile Include="Models\General\UserRoleProvider.cs" />
+=======
+>>>>>>> dev-akul
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModel\MatchDto.cs" />
+    <Compile Include="Models\ViewModel\TeamDto.cs" />
+    <Compile Include="Models\ViewModel\UpdateMatch.cs" />
+    <Compile Include="Models\ViewModel\VenueDto.cs" />
+    <Compile Include="Models\ViewModel\ViewMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -253,14 +300,34 @@
     <Content Include="App_Data\aspnet-TMS-20230802113913_log.ldf">
       <DependentUpon>aspnet-TMS-20230802113913.mdf</DependentUpon>
     </Content>
+<<<<<<< HEAD
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
+=======
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-grid.rtl.css" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-utilities.css" />
+    <Content Include="Content\bootstrap-utilities.min.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css" />
+>>>>>>> dev-akul
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.rtl.css" />
+    <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.esm.js" />
+    <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
@@ -308,21 +375,58 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Match\List.cshtml" />
+    <Content Include="Views\Match\Details.cshtml" />
+    <Content Include="Views\Match\DeleteConfirm.cshtml" />
+    <Content Include="Views\Match\Error.cshtml" />
+    <Content Include="Views\Match\New.cshtml" />
+    <Content Include="Views\Match\Edit.cshtml" />
+    <Content Include="Views\Venue\List.cshtml" />
+    <Content Include="Views\Venue\DeleteConfirm.cshtml" />
+    <Content Include="Views\Venue\Error.cshtml" />
+    <Content Include="Views\Venue\New.cshtml" />
+    <Content Include="Views\Venue\Edit.cshtml" />
+    <Content Include="Views\Team\List.cshtml" />
+    <Content Include="Views\Team\New.cshtml" />
+    <Content Include="Views\Team\DeleteConfirm.cshtml" />
+    <Content Include="Views\Team\Edit.cshtml" />
+    <Content Include="Views\Team\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Folder Include="Controllers\DataControllers\" />
     <Folder Include="Models\ViewModels\" />
+=======
+    <Folder Include="Views\MatchData\" />
+>>>>>>> dev-akul
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.rtl.min.css.map" />
+    <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.css.map" />
+    <Content Include="Content\bootstrap-utilities.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
     <None Include="packages.config" />
+<<<<<<< HEAD
+=======
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.esm.min.js.map" />
+    <Content Include="Scripts\bootstrap.esm.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+>>>>>>> dev-akul
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
