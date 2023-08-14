@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
@@ -13,131 +14,158 @@ namespace TMS.Controllers
 {
     public class TeamController : Controller
     {
-        private static readonly HttpClient client;
-        private JavaScriptSerializer jss = new JavaScriptSerializer();
+        string APIURL = "TeamData/";
+        private APICall api = new APICall();
+        private General general = new General();
 
-        static TeamController()
-        {
-            client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44395/api/");
-        }
-        // GET: Team/List
-        public ActionResult List()
+        // GET: Team/
+        public ActionResult Index(string Search)
         {
 
-            string url = "TeamData/listTeams";
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            string url = APIURL + "ListTeams";
 
-            Debug.WriteLine("The Response is ");
-            Debug.WriteLine(response.StatusCode);
+            HttpResponseMessage response = api.Get(url);
+            List<TeamDto> teams = new List<TeamDto>();
 
-            IEnumerable<TeamDto> Teams = response.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result;
-            Debug.WriteLine("Number of Teames received: ");
-            Debug.WriteLine(Teams.Count());
+            if (response.StatusCode == HttpStatusCode.OK)
+                teams = response.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result.ToList();
 
-            return View(Teams);
+            if (!String.IsNullOrEmpty(Search))
+                teams = teams.Where(x =>
+                    general.getLowerStringForSearch(x.Name).Contains(general.getLowerStringForSearch(Search))
+                    //general.getLowerStringForSearch(x.UserDetails.).Contains(general.getLowerStringForSearch(Search)) ||
+                    //general.getLowerStringForSearch(x.FormedOn.ToShortDateString()).Contains(general.getLowerStringForSearch(Search))
+                ).ToList();
+
+            ViewData["title"] = "Team List";
+            ViewData["search"] = Search;
+
+            return View(teams);
         }
 
         // GET: Team/Details/5
         public ActionResult Details(int id)
         {
-            //DetailsTeam ViewModel = new DetailsTeam();
+            string url = APIURL + "FindTeam/" + id;
 
-            string url = "TeamData/findTeam/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            HttpResponseMessage response = api.Get(url);
+            TeamDto selectedTeam = new TeamDto();
 
-            Debug.WriteLine("the respone code is ");
-            Debug.WriteLine(response.StatusCode);
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
 
-            TeamDto selectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
-            Debug.WriteLine("Teams : ");
-            Debug.WriteLine(selectedTeam.Id);
-
-            //ViewModel.SelectedTeam = selectedTeam;
-
+            ViewData["title"] = "Team Details";
             return View(selectedTeam);
         }
+        
         public ActionResult Error()
         {
 
             return View();
         }
-        // GET: Team/New
-        public ActionResult New()
+        
+        // GET: Team/Create
+        public ActionResult Create()
         {
-            string url = "Teamdata/listTeam";
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            //IEnumerable<TeamDto> TeamOptions = response.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result;
-
+            ViewData["title"] = "Create Team";
             return View();
         }   
 
 
         // POST: Team/Create
         [HttpPost]
-        public ActionResult Create(Team Team)
+        public ActionResult Create(TeamDto teamDto)
         {
-            string url = "TeamData/addTeam";
-
-            string jsonpayload = jss.Serialize(Team);
-            Debug.WriteLine(jsonpayload);
-
-            HttpContent content = new StringContent(jsonpayload);
-            content.Headers.ContentType.MediaType = "application/json";
-
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return RedirectToAction("List");
+                Team team = new Team()
+                {
+                    Name = teamDto.Name,
+                    Id = teamDto.Id,
+                    Country = teamDto.Country,
+                    OwnerId = teamDto.OwnerId
+                };
+
+                string url = APIURL + "AddTeam";
+                HttpResponseMessage response = api.Post(url, team);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(String.Concat("/"));
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
-
-
         }
 
         // GET: Team/Edit/5
         public ActionResult Edit(int id)
         {
+            string url = APIURL + "FindTeam/" + id;
+            HttpResponseMessage response = api.Get(url);
+            TeamDto selectedTeam = new TeamDto();
 
-            //the existing Team information
-            string url = "Teamdata/findTeam/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            TeamDto SelectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
-            return View(SelectedTeam);
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
 
+            ViewData["title"] = "Edit Team";
+
+            return View(selectedTeam);
         }
 
 
 
         // POST: Team/Update/5
         [HttpPost]
-        public ActionResult Update(int id, Team Team)
+        public ActionResult Update(int id, Team teamDto)
         {
+            try
+            {
+                // TODO: Add update logic here
+                Team team = new Team()
+                {
+                    Name = teamDto.Name,
+                    Id = teamDto.Id,
+                    Country = teamDto.Country,
+                    OwnerId = teamDto.OwnerId
+                };
 
-            string url = "Teamdata/updateTeam/" + id;
-            string jsonpayload = jss.Serialize(Team);
-            HttpContent content = new StringContent(jsonpayload);
-            content.Headers.ContentType.MediaType = "application/json";
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
-            Debug.WriteLine(content);
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("List");
+                string url = APIURL + "UpdateTeam/" + id;
+
+                HttpResponseMessage response = api.Post(url, team);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(String.Concat("Details/", id));
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
         }
+
         // GET: Team/Delete/5
         public ActionResult DeleteConfirm(int id)
         {
-            string url = "Teamdata/findTeam/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            TeamDto selectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
+            string url = APIURL + "FindTeam/" + id;
+            HttpResponseMessage response = api.Get(url);
+            TeamDto selectedTeam = new TeamDto();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
+
+            ViewData["title"] = "Edit Team";
+
             return View(selectedTeam);
         }
 
@@ -145,18 +173,27 @@ namespace TMS.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            string url = "Teamdata/deleteTeam/" + id;
-            HttpContent content = new StringContent("");
-            content.Headers.ContentType.MediaType = "application/json";
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            try
+            {
+                // TODO: Add delete logic here
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("List");
+                string url = APIURL + "DeleteTeam/" + id;
+                Object obj = new Object();
+
+                HttpResponseMessage response = api.Post(url, obj);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("/");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
         }
     }
