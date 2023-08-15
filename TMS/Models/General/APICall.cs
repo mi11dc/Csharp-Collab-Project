@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Script.Serialization;
 
-namespace TMS.Models.General
+namespace TMS.Models
 {
     public class APICall
     {

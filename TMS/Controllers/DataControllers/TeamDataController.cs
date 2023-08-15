@@ -17,7 +17,7 @@ namespace TMS.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: api/TeamData/listTeams
+        // GET: api/TeamData/ListTeams
         [HttpGet]
         [ResponseType(typeof(TeamDto))]
         public IHttpActionResult ListTeams()

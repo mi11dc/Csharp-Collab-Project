@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
@@ -13,49 +14,36 @@ namespace TMS.Controllers
 {
     public class VenueController : Controller
     {
-        private static readonly HttpClient client;
-        private ApplicationDbContext db = new ApplicationDbContext();
-        private JavaScriptSerializer jss = new JavaScriptSerializer();
+        string APIURL = "VenueData/";
+        private APICall api = new APICall();
+        private General general = new General();
 
-        static VenueController()
-        {
-            client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44395/api/");
-        }
         // GET: Venue/List
-        public ActionResult List()
+        public ActionResult Index(string Search)
         {
 
-            string url = "VenueData/listVenues";
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            string url = APIURL +  "ListVenues";
+            HttpResponseMessage response = api.Get(url);
+            List<VenueDto> venues = new List<VenueDto>();
 
-            Debug.WriteLine("The Response is ");
-            Debug.WriteLine(response.StatusCode);
+            if (response.StatusCode == HttpStatusCode.OK)
+                venues = response.Content.ReadAsAsync<IEnumerable<VenueDto>>().Result.ToList();
 
-            IEnumerable<VenueDto> Venues = response.Content.ReadAsAsync<IEnumerable<VenueDto>>().Result;
-            Debug.WriteLine("Number of Venues received: ");
-            Debug.WriteLine(Venues.Count());
-
-            return View(Venues);
+            return View(venues);
         }
 
         // GET: Venue/Details/5
         public ActionResult Details(int id)
         {
-            //DetailsVenue ViewModel = new DetailsVenue();
+            string url = APIURL + "FindVenue/" + id;
 
-            string url = "VenueData/findVenue/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            HttpResponseMessage response = api.Get(url);
+            VenueDto selectedVenue = new VenueDto();
 
-            Debug.WriteLine("the respone code is ");
-            Debug.WriteLine(response.StatusCode);
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
 
-            VenueDto selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
-            Debug.WriteLine("Venues : ");
-            Debug.WriteLine(selectedVenue.Id);
-
-            //ViewModel.SelectedVenue = selectedVenue;
-
+            ViewData["title"] = "Venue Details";
             return View(selectedVenue);
         }
         public ActionResult Error()
@@ -65,88 +53,107 @@ namespace TMS.Controllers
         }
 
         // GET: Venue/New
-        public ActionResult New()
-        {
-            string url = "Venuedata/listVenues";
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            IEnumerable<VenueDto> VenueOptions = response.Content.ReadAsAsync<IEnumerable<VenueDto>>().Result;
-
-            return View();
-        }
-
-        // GET: Venue/Create
         public ActionResult Create()
         {
+            ViewData["title"] = "Create Venue";
             return View();
         }
 
         // POST: Venue/Create
         [HttpPost]
-        public ActionResult Create(Venue Venue)
+        public ActionResult Create(VenueDto venueDto)
         {
-            string url = "VenueData/addVenue";
-
-            string jsonpayload = jss.Serialize(Venue);
-            Debug.WriteLine(jsonpayload);
-
-            HttpContent content = new StringContent(jsonpayload);
-            content.Headers.ContentType.MediaType = "application/json";
-
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return RedirectToAction("List");
+                string url = APIURL + "AddVenue";
+
+                Venue venue = new Venue()
+                {
+                    Name = venueDto.Name,
+                    Id = venueDto.Id,
+                    Country = venueDto.Country,
+                    BasePrice = venueDto.BasePrice,
+                    Location = venueDto.Location
+                };
+
+                HttpResponseMessage response = api.Post(url, venue);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("/");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
-
-
         }
 
         // GET: Venue/Edit/5
         public ActionResult Edit(int id)
         {
+            string url = APIURL + "FindVenue/" + id;
 
+            HttpResponseMessage response = api.Get(url);
+            VenueDto selectedVenue = new VenueDto();
 
-            //the existing Venue information
-            string url = "Venuedata/findVenue/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            VenueDto SelectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
-            return View(SelectedVenue);
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
 
+            ViewData["title"] = "Venue Edit";
+            return View(selectedVenue);
 
         }
 
 
         // POST: Venue/Update/5
         [HttpPost]
-        public ActionResult Update(int id, Venue Venue)
+        public ActionResult Update(int id, VenueDto venueDto)
         {
+            try 
+            {
+                string url = APIURL + "UpdateVenue/" + id;
 
-            string url = "Venuedata/updateVenue/" + id;
-            string jsonpayload = jss.Serialize(Venue);
-            HttpContent content = new StringContent(jsonpayload);
-            content.Headers.ContentType.MediaType = "application/json";
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
-            Debug.WriteLine(content);
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("List");
+                Venue venue = new Venue()
+                {
+                    Name = venueDto.Name,
+                    Id = venueDto.Id,
+                    Country = venueDto.Country,
+                    BasePrice = venueDto.BasePrice,
+                    Location = venueDto.Location
+                };
+
+                HttpResponseMessage response = api.Post(url, venue);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
         }
 
         // GET: Venue/Delete/5
         public ActionResult DeleteConfirm(int id)
         {
-            string url = "Venuedata/findVenue/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            VenueDto selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
+            string url = APIURL + "FindVenue/" + id;
+
+            HttpResponseMessage response = api.Get(url);
+            VenueDto selectedVenue = new VenueDto();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
+
+            ViewData["title"] = "Delete Venue";
             return View(selectedVenue);
         }
 
@@ -155,18 +162,26 @@ namespace TMS.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            string url = "Venuedata/deleteVenue/" + id;
-            HttpContent content = new StringContent("");
-            content.Headers.ContentType.MediaType = "application/json";
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            try
+            {
+                // TODO: Add delete logic here
+                string url = APIURL + "DeleteVenue/" + id;
+                Object obj = new Object();
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("List");
+                HttpResponseMessage response = api.Post(url, obj);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("/");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
         }
     }
