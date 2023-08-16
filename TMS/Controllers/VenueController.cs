@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using TMS.Models.ViewModel;
 using TMS.Models;
 
 namespace TMS.Controllers

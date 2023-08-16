@@ -11,12 +11,17 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using TMS.Models;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace TMS.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        string APIURL = "UserDetailsData/";
+        UserRoleProvider urp = new UserRoleProvider();
+        APICall api = new APICall();
+        RoleNames roles = new RoleNames();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -140,10 +145,9 @@ namespace TMS.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            UserRoleProvider urp = new UserRoleProvider();
             List<string> lststring = new List<string>();
 
-            lststring.Add(RoleNames.Admin);
+            lststring.Add(roles.Admin.Name);
 
             RegisterViewModel viewModel = new RegisterViewModel();
             viewModel.ListRoles = new List<DropdownViewModelForRole>();
@@ -159,26 +163,55 @@ namespace TMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    UserManager.AddToRole(user.Id, model.Role);
+                    var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        await UserManager.AddToRoleAsync(user.Id, model.Role);
 
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                        UserDetail userDetail = new UserDetail()
+                        {
+                            FName = model.Username,
+                            UserId = user.Id
+                        };
+
+                        string url = APIURL + "PostUserDetail";
+                        api.Post(url, userDetail);
+
+                        await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors(result);
                 }
-                AddErrors(result);
             }
+            catch
+            {
+                List<string> lststring1 = new List<string>();
+                lststring1.Add(roles.Admin.Name);
+
+                model.ListRoles = new List<DropdownViewModelForRole>();
+                model.ListRoles = urp.GetAllRoles(lststring1.ToArray());
+
+                // If we got this far, something failed, redisplay form
+                return View(model);
+            }
+
+            List<string> lststring = new List<string>();
+            lststring.Add(roles.Admin.Name);
+
+            model.ListRoles = new List<DropdownViewModelForRole>();
+            model.ListRoles = urp.GetAllRoles(lststring.ToArray());
 
             // If we got this far, something failed, redisplay form
             return View(model);

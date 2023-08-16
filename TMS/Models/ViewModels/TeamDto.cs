@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace TMS.Models.ViewModel
+namespace TMS.Models
 {
     public class TeamDto
     {
@@ -14,6 +14,6 @@ namespace TMS.Models.ViewModel
 
         public int OwnerId { get; set; }
 
-        public string UserDetails { get; set; }
+        public UserDetail OwnerDetail { get; set; }
     }
 }

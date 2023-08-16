@@ -9,7 +9,6 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TMS.Models;
-using TMS.Models.ViewModel;
 
 namespace TMS.Controllers
 {
@@ -100,7 +99,7 @@ namespace TMS.Controllers
         // POST: api/VenueData/DeleteVenue/5
         [ResponseType(typeof(Venue))]
         [HttpPost]
-        public IHttpActionResult PostVenue(Venue venue)
+        public IHttpActionResult AddVenue(Venue venue)
         {
             if (!ModelState.IsValid)
             {

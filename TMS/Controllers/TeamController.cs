@@ -7,38 +7,62 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using TMS.Models.ViewModel;
 using TMS.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace TMS.Controllers
 {
     public class TeamController : Controller
     {
-        string APIURL = "TeamData/";
+        ApplicationUser appUser;
+        RoleNames roles = new RoleNames();
+        string curUserRole;
+        UserRoleProvider urp = new UserRoleProvider();
         private APICall api = new APICall();
         private General general = new General();
+        
+        string APIURL = "TeamData/";
+        string APIURL1 = "UserDetailsData/";
+
+        public TeamController()
+        {
+            appUser = api.getCurrentUser();
+            if (!String.IsNullOrEmpty(appUser.Id))
+            {
+                curUserRole = urp.getRoleFromId(appUser.Roles.FirstOrDefault().RoleId);
+            }
+        }
 
         // GET: Team/
         public ActionResult Index(string Search)
         {
+            api.GetApplicationCookie();
 
             string url = APIURL + "ListTeams";
+            string url1 = APIURL1 + "GetUserDetails/" + appUser.Id;
+            List<TeamDto> teams = new List<TeamDto>();
+            UserDetailDto userDetails = new UserDetailDto();
 
             HttpResponseMessage response = api.Get(url);
-            List<TeamDto> teams = new List<TeamDto>();
+            HttpResponseMessage response1 = api.Get(url1);
+
+            if (response1.StatusCode == HttpStatusCode.OK)
+                userDetails = response1.Content.ReadAsAsync<UserDetailDto>().Result;
 
             if (response.StatusCode == HttpStatusCode.OK)
                 teams = response.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result.ToList();
 
             if (!String.IsNullOrEmpty(Search))
                 teams = teams.Where(x =>
-                    general.getLowerStringForSearch(x.Name).Contains(general.getLowerStringForSearch(Search))
-                    //general.getLowerStringForSearch(x.UserDetails.).Contains(general.getLowerStringForSearch(Search)) ||
-                    //general.getLowerStringForSearch(x.FormedOn.ToShortDateString()).Contains(general.getLowerStringForSearch(Search))
+                    general.getLowerStringForSearch(x.Name).Contains(general.getLowerStringForSearch(Search)) ||
+                    general.getLowerStringForSearch(x.Country).Contains(general.getLowerStringForSearch(Search))
                 ).ToList();
 
             ViewData["title"] = "Team List";
             ViewData["search"] = Search;
+            ViewData["user"] = userDetails;
+            ViewData["role"] = curUserRole;
 
             return View(teams);
         }
@@ -46,6 +70,7 @@ namespace TMS.Controllers
         // GET: Team/Details/5
         public ActionResult Details(int id)
         {
+            api.GetApplicationCookie();
             string url = APIURL + "FindTeam/" + id;
 
             HttpResponseMessage response = api.Get(url);
@@ -56,12 +81,6 @@ namespace TMS.Controllers
 
             ViewData["title"] = "Team Details";
             return View(selectedTeam);
-        }
-        
-        public ActionResult Error()
-        {
-
-            return View();
         }
         
         // GET: Team/Create
@@ -78,15 +97,24 @@ namespace TMS.Controllers
         {
             try
             {
+                api.GetApplicationCookie();
+
+                string url1 = APIURL1 + "GetUserDetails/" + appUser.Id;
+
+                UserDetailDto userDetails = new UserDetailDto();
+                HttpResponseMessage response1 = api.Get(url1);
+
+                if (response1.StatusCode == HttpStatusCode.OK)
+                    userDetails = response1.Content.ReadAsAsync<UserDetailDto>().Result;
+
+                string url = APIURL + "AddTeam";
                 Team team = new Team()
                 {
                     Name = teamDto.Name,
-                    Id = teamDto.Id,
                     Country = teamDto.Country,
-                    OwnerId = teamDto.OwnerId
+                    OwnerId = userDetails.Id
                 };
 
-                string url = APIURL + "AddTeam";
                 HttpResponseMessage response = api.Post(url, team);
 
                 if (response.IsSuccessStatusCode)
@@ -107,6 +135,8 @@ namespace TMS.Controllers
         // GET: Team/Edit/5
         public ActionResult Edit(int id)
         {
+            api.GetApplicationCookie();
+
             string url = APIURL + "FindTeam/" + id;
             HttpResponseMessage response = api.Get(url);
             TeamDto selectedTeam = new TeamDto();
@@ -127,7 +157,8 @@ namespace TMS.Controllers
         {
             try
             {
-                // TODO: Add update logic here
+                api.GetApplicationCookie();
+
                 Team team = new Team()
                 {
                     Name = teamDto.Name,
@@ -157,6 +188,8 @@ namespace TMS.Controllers
         // GET: Team/Delete/5
         public ActionResult DeleteConfirm(int id)
         {
+            api.GetApplicationCookie();
+
             string url = APIURL + "FindTeam/" + id;
             HttpResponseMessage response = api.Get(url);
             TeamDto selectedTeam = new TeamDto();
@@ -175,7 +208,7 @@ namespace TMS.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
+                api.GetApplicationCookie();
 
                 string url = APIURL + "DeleteTeam/" + id;
                 Object obj = new Object();
@@ -195,6 +228,12 @@ namespace TMS.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult Error()
+        {
+
+            return View();
         }
     }
 }

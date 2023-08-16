@@ -9,7 +9,6 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TMS.Models;
-using TMS.Models.ViewModel;
 
 namespace TMS.Controllers
 {
@@ -22,6 +21,7 @@ namespace TMS.Controllers
         [ResponseType(typeof(TeamDto))]
         public IHttpActionResult ListTeams()
         {
+
             List<Team> Team = db.Teams.ToList();
             List<TeamDto> TeamDtos = new List<TeamDto>();
 
@@ -31,7 +31,7 @@ namespace TMS.Controllers
                 Name = s.Name,
                 Country = s.Country,
                 OwnerId= s.OwnerId,
-                UserDetails = s.UserDetails.FName,
+                OwnerDetail = s.UserDetails,
             }));
 
             return Ok(TeamDtos);
@@ -49,7 +49,7 @@ namespace TMS.Controllers
                 Name = Team.Name,
                 Country = Team.Country,
                 OwnerId = Team.OwnerId,
-                UserDetails=Team.UserDetails.FName,
+                OwnerDetail = Team.UserDetails,
             };
             if (Team == null)
             {
@@ -96,7 +96,7 @@ namespace TMS.Controllers
         }
         // POST: api/TeamData/AddTeam
         [ResponseType(typeof(Team))]
-        public IHttpActionResult PostTeam(Team team)
+        public IHttpActionResult AddTeam(Team team)
         {
             if (!ModelState.IsValid)
             {

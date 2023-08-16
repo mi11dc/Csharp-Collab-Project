@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using TMS.Models;
-using TMS.Models.ViewModel;
 
 namespace TMS.Controllers
 {
@@ -17,6 +16,27 @@ namespace TMS.Controllers
         string APIURL = "MatchData/";
         private APICall api = new APICall();
         private General general = new General();
+
+        private void GetApplicationCookie()
+        {
+            HttpClient client = api.getClient();
+            string token = "";
+            //HTTP client is set up to be reused, otherwise it will exhaust server resources.
+            //This is a bit dangerous because a previously authenticated cookie could be cached for
+            //a follow-up request from someone else. Reset cookies in HTTP client before grabbing a new one.
+            client.DefaultRequestHeaders.Remove("Cookie");
+            if (!User.Identity.IsAuthenticated) return;
+
+            HttpCookie cookie = System.Web.HttpContext.Current.Request.Cookies.Get(".AspNet.ApplicationCookie");
+            if (cookie != null) token = cookie.Value;
+
+            //collect token as it is submitted to the controller
+            //use it to pass along to the WebAPI.
+            Debug.WriteLine("Token Submitted is : " + token);
+            if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
+
+            return;
+        }
 
         // GET: Match
         public ActionResult Index()
