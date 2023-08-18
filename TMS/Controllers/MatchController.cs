@@ -2,38 +2,51 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using TMS.Models;
-using TMS.Models.ViewModel;
 
 namespace TMS.Controllers
 {
     public class MatchController : Controller
     {
-        private static readonly HttpClient client;
-        private ApplicationDbContext db = new ApplicationDbContext();
-        private JavaScriptSerializer jss = new JavaScriptSerializer();
+        string APIURL = "MatchData/";
+        private APICall api = new APICall();
+        private General general = new General();
 
-        static MatchController()
+        private void GetApplicationCookie()
         {
-            client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44395/api/");
+            HttpClient client = api.getClient();
+            string token = "";
+            //HTTP client is set up to be reused, otherwise it will exhaust server resources.
+            //This is a bit dangerous because a previously authenticated cookie could be cached for
+            //a follow-up request from someone else. Reset cookies in HTTP client before grabbing a new one.
+            client.DefaultRequestHeaders.Remove("Cookie");
+            if (!User.Identity.IsAuthenticated) return;
+
+            HttpCookie cookie = System.Web.HttpContext.Current.Request.Cookies.Get(".AspNet.ApplicationCookie");
+            if (cookie != null) token = cookie.Value;
+
+            //collect token as it is submitted to the controller
+            //use it to pass along to the WebAPI.
+            Debug.WriteLine("Token Submitted is : " + token);
+            if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
+
+            return;
         }
-        // GET: Match/List
-        public ActionResult List()
+
+        // GET: Match
+        public ActionResult Index()
         {
-            string url = "MatchData/listmatches";
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            string url = APIURL + "Listmatches";
+            HttpResponseMessage response = api.Get(url);
+            List<MatchDto> matches = new List<MatchDto>();
 
-            Debug.WriteLine("The Response is ");
-            Debug.WriteLine(response.StatusCode);
-
-            IEnumerable<MatchDto> matches = response.Content.ReadAsAsync<IEnumerable<MatchDto>>().Result;
-            Debug.WriteLine("Number of Matches received: ");
-            Debug.WriteLine(matches.Count());
+            if (response.StatusCode == HttpStatusCode.OK)
+                matches = response.Content.ReadAsAsync<IEnumerable<MatchDto>>().Result.ToList();
 
             return View(matches);
         }
@@ -41,22 +54,18 @@ namespace TMS.Controllers
         // GET: Match/Details/5
         public ActionResult Details(int id)
         {
-            //DetailsMatch ViewModel = new DetailsMatch();
+            string url = APIURL + "FindMatch/" + id;
 
-            string url = "MatchData/findmatch/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            HttpResponseMessage response = api.Get(url);
+            MatchDto selectedMatch = new MatchDto();
 
-            Debug.WriteLine("the respone code is ");
-            Debug.WriteLine(response.StatusCode);
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
 
-            MatchDto selectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
-            Debug.WriteLine("matches : ");
-            Debug.WriteLine(selectedMatch.Id);
-
-            //ViewModel.SelectedMatch = selectedMatch;
-
+            ViewData["title"] = "Match Details";
             return View(selectedMatch);
         }
+
         public ActionResult Error()
         {
 
@@ -64,84 +73,99 @@ namespace TMS.Controllers
         }
 
         // GET: Match/Create
-        public ActionResult New()
+        public ActionResult Create()
         {
+            ViewData["title"] = "Create Match";
             return View();
         }
 
         [HttpPost]
-        public ActionResult New(Match match)
+        public ActionResult Create(MatchDto matchDto)
         {
-            string url = "MatchData/addmatch";
-
-            string jsonpayload = jss.Serialize(match);
-            Debug.WriteLine(jsonpayload);
-
-            HttpContent content = new StringContent(jsonpayload);
-            content.Headers.ContentType.MediaType = "application/json";
-
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return RedirectToAction("List");
-            }
-            else
-            {
-                return RedirectToAction("Error");
-            }
+                string url = APIURL + "AddMatch";
 
+                Match match = new Match()
+                {
+                    DateTime = DateTime.Now,
+                    //Team1Id = matchDto.Team1
+                };
+
+                HttpResponseMessage response = api.Post(url, match);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
+            }
+            catch
+            {
+                return View();
+            }
 
         }
     
         // GET: Match/Edit/5
         public ActionResult Edit(int id)
         {
-            UpdateMatch ViewModel = new UpdateMatch();
+            string url = APIURL + "FindMatch/" + id;
 
-            //the existing Match information
-            string url = "Matchdata/findMatch/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            MatchDto SelectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
-            ViewModel.SelectedMatch = SelectedMatch;
+            HttpResponseMessage response = api.Get(url);
+            MatchDto selectedMatch = new MatchDto();
 
-            // all Venue to choose from when updating this Match
-            //the existing Match information
-            url = "Venuedata/listVenues/";
-            response = client.GetAsync(url).Result;
-            IEnumerable<VenueDto> VenueOptions = response.Content.ReadAsAsync<IEnumerable<VenueDto>>().Result;
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
 
-            ViewModel.VenueOptions = VenueOptions;
-
-            return View(ViewModel);
+            ViewData["title"] = "Match Update";
+            return View(selectedMatch);
         }
 
         // POST: Match/Update/5
         [HttpPost]
-        public ActionResult Update(int id, Match Match)
+        public ActionResult Update(int id, MatchDto matchDto)
         {
+            try
+            {
+                string url = APIURL + "UpdateMatch/" + id;
+                Match match = new Match()
+                {
+                    DateTime = DateTime.Now,
+                    //Team1Id = matchDto.Team1
+                };
 
-            string url = "Matchdata/updateMatch/" + id;
-            string jsonpayload = jss.Serialize(Match);
-            HttpContent content = new StringContent(jsonpayload);
-            content.Headers.ContentType.MediaType = "application/json";
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
-            Debug.WriteLine(content);
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("List");
+                HttpResponseMessage response = api.Post(url, match);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
         }
 
         // GET: Match/Delete/5
         public ActionResult DeleteConfirm(int id)
         {
-            string url = "Matchdata/findMatch/" + id;
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            MatchDto selectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
+            string url = APIURL + "FindMatch/" + id;
+
+            HttpResponseMessage response = api.Get(url);
+            MatchDto selectedMatch = new MatchDto();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                selectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
+
+            ViewData["title"] = "Match Update";
             return View(selectedMatch);
         }
 
@@ -149,18 +173,25 @@ namespace TMS.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            string url = "Matchdata/deleteMatch/" + id;
-            HttpContent content = new StringContent("");
-            content.Headers.ContentType.MediaType = "application/json";
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            try 
+            { 
+                string url = APIURL + "DeleteMatch/" + id;
+                Object obj = new Object();
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("List");
+                HttpResponseMessage response = api.Post(url, obj);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            else
+            catch
             {
-                return RedirectToAction("Error");
+                return View();
             }
         }
     }

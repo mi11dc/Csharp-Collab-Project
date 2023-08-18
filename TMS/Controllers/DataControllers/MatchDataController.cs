@@ -110,7 +110,7 @@ namespace TMS.Controllers
 
         // POST: api/MatchData/AddMatch
         [ResponseType(typeof(Match))]
-        public IHttpActionResult PostMatch(Match match)
+        public IHttpActionResult AddMatch(Match match)
         {
             if (!ModelState.IsValid)
             {
