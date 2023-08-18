@@ -64,13 +64,13 @@ namespace TMS.Controllers
         }
 
         // GET: Match/Create
-        public ActionResult Create()
+        public ActionResult New()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Create(Match match)
+        public ActionResult New(Match match)
         {
             string url = "MatchData/addmatch";
 

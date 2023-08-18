@@ -4,10 +4,10 @@
 }
 
 <h2>Create Match</h2>
-<form action="/Match/Create" method="POST">
+<form action="/Match/New" method="POST">
     <div>
-        <label>Ho@*me Team: </label><input type="number" name="Team1Id" id="Team1Id" value="" />
-        <select name="TeamId">
+        <label>Home Team: </label><input type="number" name="Team1Id" id="Team1Id" value="" />
+        @*<select name="TeamId">
             @foreach (var Team in Model.TeamId)
             {
                 <option value="@Team.HomeTeamId">@Team.HomeTeamId</option>
@@ -23,7 +23,7 @@
         <label>DateTime:</label> <input type="datetime-local" name="DateTime" id="DateTime" value="" />
     </div>
     <div>
-        <label>Venue :</label>
+        <label>Venue :</label> <input type="number" name="venue" id="venue" value="" />
  @*       <select name="VenueId">
             @foreach (var Venue in Model.VenueOptions)
             {
