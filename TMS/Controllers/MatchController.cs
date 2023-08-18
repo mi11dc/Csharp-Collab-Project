@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using TMS.Models;
@@ -14,6 +15,8 @@ namespace TMS.Controllers
     public class MatchController : Controller
     {
         string APIURL = "MatchData/";
+        string APIURL1 = "TeamData/";
+        string APIURL2 = "TournamentVenuesData/";
         private APICall api = new APICall();
         private General general = new General();
 
@@ -39,7 +42,7 @@ namespace TMS.Controllers
         }
 
         // GET: Match
-        public ActionResult Index()
+        public ActionResult Index(string Search)
         {
             string url = APIURL + "Listmatches";
             HttpResponseMessage response = api.Get(url);
@@ -47,6 +50,16 @@ namespace TMS.Controllers
 
             if (response.StatusCode == HttpStatusCode.OK)
                 matches = response.Content.ReadAsAsync<IEnumerable<MatchDto>>().Result.ToList();
+
+            if (!String.IsNullOrEmpty(Search))
+                matches = matches.Where(x =>
+                    general.getLowerStringForSearch(String.Concat(x.Team1, " vs ", x.Team2))
+                    .Contains(general.getLowerStringForSearch(Search)) ||
+                    general.getLowerStringForSearch(x.TournamentVenue.VenueDetail.Name)
+                    .Contains(general.getLowerStringForSearch(Search))
+                ).ToList();
+
+            ViewData["search"] = Search;
 
             return View(matches);
         }
@@ -75,8 +88,23 @@ namespace TMS.Controllers
         // GET: Match/Create
         public ActionResult Create()
         {
+            MatchDto matchDto = new MatchDto();
+
+            string url = APIURL1 + "ListTeams";
+            string url1 = APIURL2 + "ListTournamentVenues";
+
+            HttpResponseMessage response = api.Get(url);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                matchDto.Teams = response.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result.ToList();
+
+            HttpResponseMessage response1 = api.Get(url1);
+
+            if (response1.StatusCode == HttpStatusCode.OK)
+                matchDto.TournamentVenues = response1.Content.ReadAsAsync<IEnumerable<TournamentVenueAssociationDto>>().Result.ToList();
+
             ViewData["title"] = "Create Match";
-            return View();
+            return View(matchDto);
         }
 
         [HttpPost]
@@ -88,14 +116,16 @@ namespace TMS.Controllers
 
                 Match match = new Match()
                 {
-                    DateTime = DateTime.Now,
-                    //Team1Id = matchDto.Team1
+                    DateTime = matchDto.DateTime,
+                    Team1Id = matchDto.Team1Id,
+                    Team2Id = matchDto.Team2Id,
+                    TournamentVenueId = matchDto.TournamentVenueId
                 };
 
                 HttpResponseMessage response = api.Post(url, match);
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("/");
                 }
                 else
                 {
@@ -112,13 +142,22 @@ namespace TMS.Controllers
         // GET: Match/Edit/5
         public ActionResult Edit(int id)
         {
+            MatchDto selectedMatch = new MatchDto();
             string url = APIURL + "FindMatch/" + id;
+            string url1 = APIURL1 + "ListTeams";
+            string url2 = APIURL2 + "ListTournamentVenues";
 
             HttpResponseMessage response = api.Get(url);
-            MatchDto selectedMatch = new MatchDto();
-
             if (response.StatusCode == HttpStatusCode.OK)
                 selectedMatch = response.Content.ReadAsAsync<MatchDto>().Result;
+
+            HttpResponseMessage response1 = api.Get(url1);
+            if (response1.StatusCode == HttpStatusCode.OK)
+                selectedMatch.Teams = response1.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result.ToList();
+
+            HttpResponseMessage response2 = api.Get(url2);
+            if (response2.StatusCode == HttpStatusCode.OK)
+                selectedMatch.TournamentVenues = response2.Content.ReadAsAsync<IEnumerable<TournamentVenueAssociationDto>>().Result.ToList();
 
             ViewData["title"] = "Match Update";
             return View(selectedMatch);
@@ -133,15 +172,18 @@ namespace TMS.Controllers
                 string url = APIURL + "UpdateMatch/" + id;
                 Match match = new Match()
                 {
-                    DateTime = DateTime.Now,
-                    //Team1Id = matchDto.Team1
+                    Id= id,
+                    DateTime = matchDto.DateTime,
+                    Team1Id = matchDto.Team1Id,
+                    Team2Id = matchDto.Team2Id,
+                    TournamentVenueId = matchDto.TournamentVenueId
                 };
 
                 HttpResponseMessage response = api.Post(url, match);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("/");
                 }
                 else
                 {
@@ -182,7 +224,7 @@ namespace TMS.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("/");
                 }
                 else
                 {

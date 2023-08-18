@@ -1,35 +1,67 @@
-﻿@model PassionProject.Models.ViewModels.UpdateMatch
+﻿@model TMS.Models.MatchDto
 
 @{
     ViewBag.Title = "Edit";
 }
 
 <h2>Update Match</h2>
-<form action="/Match/Update/@Model.SelectedMatch.MatchId" method="POST">
+<form action="/Match/Update/@Model.Id" method="POST">
     <div style="display:none;">
-        <input type="text" name="MatchId" value="@Model.SelectedMatch.MatchId" />
+        <input type="text" name="MatchId" value="@Model.Id" />
     </div>
     <div>
-        <label>Home Team:</label><input type="number" name="HomeTeamId" value="@Model.SelectedMatch.HomeTeamName" />
-</div>
-    <div>
-        <label>Opponent Team:</label> <input type="text" name="OpponentTeam" value="@Model.SelectedMatch.OpponentTeam" />
-    </div>
-    <div>
-        <label>Date:</label> <input type="datetime-local" name="Date" value="@Model.SelectedMatch.Date" />
-    </div>
-    <div>
-        <label>Venue:</label>
-        <select name="VenueId">
-            @foreach (var Venue in Model.VenueOptions)
+        <label>Home Team: </label>
+        <select name="Team1Id" id="Team1Id">
+            <option>Select Home Team</option>
+            @foreach (var Team in Model.Teams)
             {
-                string selected = "";
-                if (Venue.VenueName == Model.SelectedMatch.VenueName)
+                if (Team.Id == Model.Team1Id)
                 {
-                    selected = "selected";
+                    <option value="@Team.Id" selected>@Team.Name</option>
                 }
-                <option value="@Venue.VenueId" @selected>@Venue.VenueName</option>
+                else
+                {
+                    <option value="@Team.Id">@Team.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div>
+        <label>Opponent Team:</label>
+        <select name="Team2Id" id="Team2Id">
+            <option>Select Opponent Team</option>
+            @foreach (var Team in Model.Teams)
+            {
+                if (Team.Id == Model.Team2Id)
+                {
+                    <option value="@Team.Id" selected>@Team.Name</option>
+                }
+                else
+                {
+                    <option value="@Team.Id">@Team.Name</option>
+                }
+            }
+        </select>
+    </div>
 
+    <div>
+        <label>DateTime:</label>
+        <input type="datetime-local" name="DateTime" id="DateTime" value="@Model.DateTime.ToString("yyyy-MM-ddTHH:mm")" />
+    </div>
+    <div>
+        <label>Venue :</label>
+        <select name="TournamentVenueId" id="TournamentVenueId">
+            <option>Select Venue</option>
+            @foreach (var Venue in Model.TournamentVenues)
+            {
+                if (Venue.VenueId == Model.TournamentVenueId)
+                {
+                    <option value="@Venue.VenueId" selected>@Venue.VenueDetail.Name</option>
+                }
+                else
+                {
+                    <option value="@Venue.VenueId">@Venue.VenueDetail.Name</option>
+                }
             }
         </select>
     </div>
