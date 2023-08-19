@@ -13,9 +13,14 @@ namespace TMS.Controllers
 {
     public class VenueController : Controller
     {
-        string APIURL = "VenueData/";
+        ApplicationUser appUser;
+        RoleNames roles = new RoleNames();
+        string curUserRole;
+        UserRoleProvider urp = new UserRoleProvider();
         private APICall api = new APICall();
         private General general = new General();
+        
+        string APIURL = "VenueData/";
 
         // GET: Venue/List
         public ActionResult Index(string Search)

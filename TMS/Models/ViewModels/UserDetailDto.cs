@@ -11,6 +11,7 @@ namespace TMS.Models
         public string FName { get; set; }
         public string LName { get; set; }
         public decimal BasePrice { get; set; }
+        public string sDOB { get; set; }
         public DateTime? DOB { get; set; }
         public string Country { get; set; }
         public string UserId { get; set; }

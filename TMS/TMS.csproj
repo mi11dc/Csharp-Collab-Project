@@ -181,12 +181,16 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DataControllers\MatchDataController.cs" />
     <Compile Include="Controllers\DataControllers\TeamDataController.cs" />
+    <Compile Include="Controllers\DataControllers\TeamPlayerDataController.cs" />
+    <Compile Include="Controllers\DataControllers\TournamentDataController.cs" />
     <Compile Include="Controllers\DataControllers\UserDetailsDataController.cs" />
     <Compile Include="Controllers\DataControllers\VenueDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MatchController.cs" />
     <Compile Include="Controllers\TeamController.cs" />
+    <Compile Include="Controllers\TeamPlayerController.cs" />
+    <Compile Include="Controllers\TournamentsController.cs" />
     <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -255,6 +259,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ViewModels\MatchDto.cs" />
     <Compile Include="Models\ViewModels\TeamDto.cs" />
+    <Compile Include="Models\ViewModels\TeamPlayerDto.cs" />
     <Compile Include="Models\ViewModels\UpdateMatch.cs" />
     <Compile Include="Models\ViewModels\UserDetailDto.cs" />
     <Compile Include="Models\ViewModels\VenueDto.cs" />
@@ -358,6 +363,13 @@
     <Content Include="Views\Team\Edit.cshtml" />
     <Content Include="Views\Team\Error.cshtml" />
     <Content Include="Views\Team\Details.cshtml" />
+    <Content Include="Views\TeamPlayer\AddTeamPlayerToTeam.cshtml" />
+    <Content Include="Views\TeamPlayer\ReleasePlayer.cshtml" />
+    <Content Include="Views\Tournaments\Create.cshtml" />
+    <Content Include="Views\Tournaments\Delete.cshtml" />
+    <Content Include="Views\Tournaments\Details.cshtml" />
+    <Content Include="Views\Tournaments\Edit.cshtml" />
+    <Content Include="Views\Tournaments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
