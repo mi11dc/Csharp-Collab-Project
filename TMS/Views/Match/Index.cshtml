@@ -4,9 +4,73 @@
     ViewBag.Title = "List";
 }
 
-<h2>List</h2>
-<a href="/Match/New">New Match</a>
-@foreach (var match in Model)
-{
-    <h2><a href="/Match/Details/@match.Id">@match.Team1  VS @match.Team2</a></h2>
-}
+<h2>List Match</h2>
+
+<nav class="my-2">
+    <a class="btn btn-primary navlink" href="/Match/Create">Add Team</a>
+</nav>
+
+<div class="row">
+    <div class="col-12">
+        <form asp-controller="Team" asp-action="Index">
+            <p>
+                Search: <input type="text" name="Search" value="@ViewData["search"]" />
+                <input type="submit" value="Search" />
+            </p>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Match</th>
+                    <th>Venue</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() == 0)
+                {
+                    <tr class="text-center">
+                        <td colspan="5">No Data Found</td>
+                    </tr>
+                }
+                @{ int i = 1; }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.Team1 vs @item.Team2</td>
+                        <td>@item.TournamentVenue.VenueDetail.Name</td>
+                        <td>
+                            @Html.ActionLink("View", "Details", new { id = @item.Id }, new { @class = "btn btn-primary" })
+                            @Html.ActionLink("Edit", "Edit", new { id = @item.Id }, new { @class = "btn btn-warning" })
+                            @Html.ActionLink("Delete", "DeleteConfirm", new { id = @item.Id }, new { @class = "btn btn-danger" })
+                        </td>
+                    </tr>
+
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    nav {
+        padding-bottom: 1em;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    thead, tbody, tfoot, tr, td, th {
+        border-width: 1px;
+        padding: 0.25em;
+    }
+</style>

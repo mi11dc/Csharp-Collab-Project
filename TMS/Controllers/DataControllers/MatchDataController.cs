@@ -28,9 +28,10 @@ namespace TMS.Controllers
             {
                 Id = a.Id,
                 DateTime = a.DateTime,
+                sDateTime = a.DateTime.ToString(),
                 Team1 = a.TeamDetail1.Name,
                 Team2 = a.TeamDetail2.Name,
-                TournamentVenue = a.TournamentVenueDetail.VenueDetail.Name,
+                TournamentVenue = a.TournamentVenueDetail,
 
             }));
             return MatchDtos;
@@ -47,9 +48,13 @@ namespace TMS.Controllers
             {
                 Id = Match.Id,
                 DateTime = Match.DateTime,
+                sDateTime = Match.DateTime.ToString(),
+                Team1Id = Match.TeamDetail1.Id,
                 Team1 = Match.TeamDetail1.Name,
+                Team2Id = Match.TeamDetail2.Id,
                 Team2 = Match.TeamDetail2.Name,
-                TournamentVenue = Match.TournamentVenueDetail.VenueDetail.Name,
+                TournamentVenueId = Match.TournamentVenueDetail.Id,
+                TournamentVenue = Match.TournamentVenueDetail,
             };
             if (Match == null)
             {
@@ -110,6 +115,7 @@ namespace TMS.Controllers
 
         // POST: api/MatchData/AddMatch
         [ResponseType(typeof(Match))]
+        [HttpPost]
         public IHttpActionResult AddMatch(Match match)
         {
             if (!ModelState.IsValid)
@@ -125,6 +131,7 @@ namespace TMS.Controllers
 
         // DELETE: api/MatchData/DeleteMatch/5
         [ResponseType(typeof(Match))]
+        [HttpPost]
         public IHttpActionResult DeleteMatch(int id)
         {
             Match match = db.Matches.Find(id);

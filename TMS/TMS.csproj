@@ -183,6 +183,7 @@
     <Compile Include="Controllers\DataControllers\TeamDataController.cs" />
     <Compile Include="Controllers\DataControllers\TeamPlayerDataController.cs" />
     <Compile Include="Controllers\DataControllers\TournamentDataController.cs" />
+    <Compile Include="Controllers\DataControllers\TournamentVenuesDataController.cs" />
     <Compile Include="Controllers\DataControllers\UserDetailsDataController.cs" />
     <Compile Include="Controllers\DataControllers\VenueDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -259,7 +260,11 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ViewModels\MatchDto.cs" />
     <Compile Include="Models\ViewModels\TeamDto.cs" />
+<<<<<<< HEAD
     <Compile Include="Models\ViewModels\TeamPlayerDto.cs" />
+=======
+    <Compile Include="Models\ViewModels\TournamentVenueAssociationDto.cs" />
+>>>>>>> dev-akul
     <Compile Include="Models\ViewModels\UpdateMatch.cs" />
     <Compile Include="Models\ViewModels\UserDetailDto.cs" />
     <Compile Include="Models\ViewModels\VenueDto.cs" />
@@ -350,7 +355,7 @@
     <Content Include="Views\Match\Details.cshtml" />
     <Content Include="Views\Match\DeleteConfirm.cshtml" />
     <Content Include="Views\Match\Error.cshtml" />
-    <Content Include="Views\Match\New.cshtml" />
+    <Content Include="Views\Match\Create.cshtml" />
     <Content Include="Views\Match\Edit.cshtml" />
     <Content Include="Views\Venue\Index.cshtml" />
     <Content Include="Views\Venue\DeleteConfirm.cshtml" />
