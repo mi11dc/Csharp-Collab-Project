@@ -260,11 +260,8 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ViewModels\MatchDto.cs" />
     <Compile Include="Models\ViewModels\TeamDto.cs" />
-<<<<<<< HEAD
     <Compile Include="Models\ViewModels\TeamPlayerDto.cs" />
-=======
     <Compile Include="Models\ViewModels\TournamentVenueAssociationDto.cs" />
->>>>>>> dev-akul
     <Compile Include="Models\ViewModels\UpdateMatch.cs" />
     <Compile Include="Models\ViewModels\UserDetailDto.cs" />
     <Compile Include="Models\ViewModels\VenueDto.cs" />
