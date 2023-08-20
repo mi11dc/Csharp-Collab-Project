@@ -36,6 +36,31 @@ namespace TMS.Controllers
 
             return Ok(TeamDtos);
         }
+
+        [HttpGet]
+        [ResponseType(typeof(TeamDto))]
+        public IHttpActionResult ListTeamsByOwner(int id)
+        {
+
+            List<Team> Team = db.Teams.ToList();
+            List<TeamDto> TeamDtos = new List<TeamDto>();
+
+            Team.ForEach(s => 
+            {
+                if (s.OwnerId.Equals(id))
+                    TeamDtos.Add(new TeamDto()
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        Country = s.Country,
+                        OwnerId = s.OwnerId,
+                        OwnerDetail = s.UserDetails,
+                    });
+            });
+
+            return Ok(TeamDtos);
+        }
+
         // GET: api/TeamData/FindTeam/5
 
         [ResponseType(typeof(TeamDto))]

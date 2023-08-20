@@ -18,7 +18,7 @@ namespace TMS.Controllers
         private APICall api = new APICall();
         private General general = new General();
 
-        string APIURL = "TeamData/";
+        string APIURL = "TeamPlayerData/";
         string APIURL1 = "UserDetailsData/";
 
         public TeamPlayerController()
@@ -42,7 +42,7 @@ namespace TMS.Controllers
             TeamPlayerDto teamPlayerDto = new TeamPlayerDto();
             teamPlayerDto.TeamId = id;
 
-            string url = APIURL + "ListTeamPlayers";
+            string url = APIURL + "ListPlayers";
 
             HttpResponseMessage response = api.Get(url);
 

@@ -14,15 +14,12 @@
         <div class="inputrow my-2">
             <label for="PlayerId">Select Player:</label>
             <select name="PlayerId" id="PlayerId">
+                <option>Select Player</option>
                 @foreach (var item in Model.LstPlayers)
                 {
                     <option value="@item.Id">@item.FName @item.LName</option>
                 }
             </select>
-        </div>
-        <div class="inputrow my-2">
-            <label for="Owner">Joined Price:</label>
-            <input type="number" min="0" step="0.1" id="JoinedPrice" name="JoinedPrice" />
         </div>
 
         <input id="TeamId" name="TeamId" type="hidden" value="@Model.TeamId" />

@@ -24,6 +24,7 @@ namespace TMS.Controllers
         
         string APIURL = "TeamData/";
         string APIURL1 = "UserDetailsData/";
+        string APIURL2 = "TeamPlayerData/";
 
         public TeamController()
         {
@@ -39,17 +40,17 @@ namespace TMS.Controllers
         {
             api.GetApplicationCookie();
 
-            string url = APIURL + "ListTeams";
             string url1 = APIURL1 + "GetUserDetails/" + appUser.Id;
             List<TeamDto> teams = new List<TeamDto>();
             UserDetailDto userDetails = new UserDetailDto();
 
-            HttpResponseMessage response = api.Get(url);
             HttpResponseMessage response1 = api.Get(url1);
 
             if (response1.StatusCode == HttpStatusCode.OK)
                 userDetails = response1.Content.ReadAsAsync<UserDetailDto>().Result;
 
+            string url = APIURL + "ListTeamsByOwner/" + userDetails.Id;
+            HttpResponseMessage response = api.Get(url);
             if (response.StatusCode == HttpStatusCode.OK)
                 teams = response.Content.ReadAsAsync<IEnumerable<TeamDto>>().Result.ToList();
 
@@ -61,8 +62,8 @@ namespace TMS.Controllers
 
             ViewData["title"] = "Team List";
             ViewData["search"] = Search;
-            ViewData["user"] = userDetails;
-            ViewData["role"] = curUserRole;
+            //ViewData["user"] = userDetails;
+            //ViewData["role"] = curUserRole;
 
             return View(teams);
         }
@@ -71,13 +72,17 @@ namespace TMS.Controllers
         public ActionResult Details(int id)
         {
             api.GetApplicationCookie();
+            TeamDto selectedTeam = new TeamDto();
             string url = APIURL + "FindTeam/" + id;
+            string url1 = APIURL2 + "ListTeamPlayers/" + id;
 
             HttpResponseMessage response = api.Get(url);
-            TeamDto selectedTeam = new TeamDto();
-
             if (response.StatusCode == HttpStatusCode.OK)
                 selectedTeam = response.Content.ReadAsAsync<TeamDto>().Result;
+
+            HttpResponseMessage response1 = api.Get(url1);
+            if (response1.StatusCode == HttpStatusCode.OK)
+                selectedTeam.ListTeamPlayers = response1.Content.ReadAsAsync<IEnumerable<UserDetailDto>>().Result.ToList();
 
             ViewData["title"] = "Team Details";
             return View(selectedTeam);

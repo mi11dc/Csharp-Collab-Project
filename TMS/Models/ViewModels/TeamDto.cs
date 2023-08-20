@@ -15,5 +15,7 @@ namespace TMS.Models
         public int OwnerId { get; set; }
 
         public UserDetail OwnerDetail { get; set; }
+
+        public List<UserDetailDto> ListTeamPlayers { get; set; }
     }
 }

@@ -14,10 +14,11 @@ namespace TMS.Controllers
     public class TeamPlayerDataController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        RoleNames roles = new RoleNames();
 
         // GET: api/TeamPlayerData/ListTeamPlayers
         [HttpGet]
-        public IHttpActionResult ListTeamPlayers()
+        public IHttpActionResult ListTeamPlayers(int id)
         {
             var users = db.UserDetails.ToList();
             List<TeamPlayerAssociation> teamPlayers = db.TeamPlayerAssociations.ToList();
@@ -25,13 +26,38 @@ namespace TMS.Controllers
 
             users.ForEach(p =>
             {
-                if (teamPlayers.Count(x => x.PlayerId == p.Id) == 0)
+                if (teamPlayers.Count(x => (x.PlayerId == p.Id) && (x.TeamId == id)) > 0)
+                //if (teamPlayers.Count(x => x.PlayerId == p.Id) == 0)
+                //    if (teamPlayers.Count(x => x.TeamId == id) > 0)
                     playerDtos.Add(new UserDetailDto()
                     {
                         Id = p.Id,
                         FName = p.FName,
                         LName = p.LName
                     });
+            });
+
+            return Ok(playerDtos);
+        }
+
+        [HttpGet]
+        public IHttpActionResult ListPlayers()
+        {
+
+            List<UserDetail> users = db.UserDetails.ToList();
+            List<TeamPlayerAssociation> teamPlayers = db.TeamPlayerAssociations.ToList();
+            List<UserDetailDto> playerDtos = new List<UserDetailDto>();
+
+            users.ForEach((u) =>
+            {
+                if (u.User.Roles.FirstOrDefault().RoleId.Equals(roles.Player.Id))
+                    if (teamPlayers.Count(x => x.PlayerId == u.Id) == 0)
+                        playerDtos.Add(new UserDetailDto()
+                        {
+                            Id = u.Id,
+                            FName = u.FName,
+                            LName = u.LName,
+                        });
             });
 
             return Ok(playerDtos);
@@ -90,7 +116,7 @@ namespace TMS.Controllers
         [HttpGet]
         public IHttpActionResult FineTeamPlayer(int id)
         {
-            TeamPlayerAssociation teamPlayer = db.TeamPlayerAssociations.Find(id);
+            TeamPlayerAssociation teamPlayer = db.TeamPlayerAssociations.Where(x => x.PlayerId == id).FirstOrDefault();
             if (teamPlayer == null)
             {
                 return NotFound();
