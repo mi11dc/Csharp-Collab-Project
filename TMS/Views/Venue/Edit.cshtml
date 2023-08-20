@@ -1,28 +1,36 @@
-﻿@model TMS.Models.ViewModel.VenueDto
+﻿@model TMS.Models.VenueDto
 @{
     ViewBag.Title = "Edit";
 }
 
 <h2>Edit Venue</h2>
-<form action="/Venue/Update/@Model.Id" method="POST">
-    <div style="display:none;">
-        <input type="text" name="VenueId" value="@Model.Id" />
-    </div>
-    <div>
-        <label>Venue Name: </label> <input type="text" name="Name" id="Name" value="@Model.Name" />
-    </div>
-    <div>
-        <label>Base Price: </label> <input type="text" name="BasePrice" id="BasePrice" value="@Model.BasePrice" />
-    </div>
-    <div>
-        <label>Location:</label> <input type="text" name="Location" id="Location" value="@Model.Location" />
-    </div>
-
-    <div>
-        <label>Country</label> <input type="text" name="Country" id="Country" value="@Model.Country" />
-    </div>
-    <div>
-        <input type="submit" value="Update Venue" />
-    </div>
-</form>
+<div id="containershow">
+    <nav class="my-2">
+        <a class="btn btn-secondary navlink" href="/Venue">Back To Venues</a>
+    </nav>
+    <form action="/Venue/Update/@Model.Id" method="POST">
+        <div style="display:none;">
+            <input type="text" name="VenueId" value="@Model.Id" />
+        </div>
+        <div class="inputrow my-2">
+            <label for="Name">Name:</label>
+            <input type="text" id="Name" name="Name" value="@Model.Name" />
+        </div>
+        <div class="inputrow my-2">
+            <label for="Country">Country:</label>
+            <input type="text" id="Country" name="Country" value="@Model.Country" />
+        </div>
+        <div class="inputrow my-2">
+            <label for="Location">Location:</label>
+            <input type="text" id="Location" name="Location" value="@Model.Location" />
+        </div>
+        <div class="inputrow my-2">
+            <label for="BasePrice">Base Price:</label>
+            <input type="number" min="0" step="0.01" id="BasePrice" name="BasePrice" value="@Model.BasePrice" />
+        </div>
+        <div>
+            <input type="submit" class="btn btn-primary" value="Update Venue" />
+        </div>
+    </form>
+</div>
 

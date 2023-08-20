@@ -35,8 +35,8 @@ namespace TMS.Controllers
 
             return Ok(VenueDtos);
         }
-        // GET: api/VenueData/FindVenue/5
 
+        // GET: api/VenueData/FindVenue/5
         [ResponseType(typeof(VenueDto))]
         [HttpGet]
         public IHttpActionResult FindVenue(int Id)

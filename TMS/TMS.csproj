@@ -179,6 +179,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DataControllers\AgentVenueDataController.cs" />
     <Compile Include="Controllers\DataControllers\MatchDataController.cs" />
     <Compile Include="Controllers\DataControllers\TeamDataController.cs" />
     <Compile Include="Controllers\DataControllers\TeamPlayerDataController.cs" />
@@ -258,9 +259,11 @@
     <Compile Include="Models\General\UserRoleProvider.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModels\AgentVenueAssociationDto.cs" />
     <Compile Include="Models\ViewModels\MatchDto.cs" />
     <Compile Include="Models\ViewModels\TeamDto.cs" />
     <Compile Include="Models\ViewModels\TeamPlayerDto.cs" />
+    <Compile Include="Models\ViewModels\TournamentDto.cs" />
     <Compile Include="Models\ViewModels\TournamentVenueAssociationDto.cs" />
     <Compile Include="Models\ViewModels\UpdateMatch.cs" />
     <Compile Include="Models\ViewModels\UserDetailDto.cs" />
@@ -357,7 +360,7 @@
     <Content Include="Views\Venue\Index.cshtml" />
     <Content Include="Views\Venue\DeleteConfirm.cshtml" />
     <Content Include="Views\Venue\Error.cshtml" />
-    <Content Include="Views\Venue\New.cshtml" />
+    <Content Include="Views\Venue\Create.cshtml" />
     <Content Include="Views\Venue\Edit.cshtml" />
     <Content Include="Views\Team\Index.cshtml" />
     <Content Include="Views\Team\Create.cshtml" />
@@ -372,6 +375,7 @@
     <Content Include="Views\Tournaments\Details.cshtml" />
     <Content Include="Views\Tournaments\Edit.cshtml" />
     <Content Include="Views\Tournaments\Index.cshtml" />
+    <Content Include="Views\Venue\Details.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

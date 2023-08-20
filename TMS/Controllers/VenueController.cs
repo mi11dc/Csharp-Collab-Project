@@ -21,34 +21,63 @@ namespace TMS.Controllers
         private General general = new General();
         
         string APIURL = "VenueData/";
+        string APIURL1 = "UserDetailsData/";
+        string APIURL2 = "AgentVenueData/";
+
+        public VenueController()
+        {
+            appUser = api.getCurrentUser();
+            if (!String.IsNullOrEmpty(appUser.Id))
+            {
+                curUserRole = urp.getRoleFromId(appUser.Roles.FirstOrDefault().RoleId);
+            }
+        }
 
         // GET: Venue/List
         public ActionResult Index(string Search)
         {
+            api.GetApplicationCookie();
 
-            string url = APIURL +  "ListVenues";
+            string url1 = APIURL1 + "GetUserDetails/" + appUser.Id;
+            List<AgentVenueAssociationDto> agentVenuesFromTable = new List<AgentVenueAssociationDto>();
+            UserDetailDto userDetails = new UserDetailDto();
+
+            HttpResponseMessage response1 = api.Get(url1);
+
+            if (response1.StatusCode == HttpStatusCode.OK)
+                userDetails = response1.Content.ReadAsAsync<UserDetailDto>().Result;
+
+            string url = APIURL2 + "ListAgentVenue/" + userDetails.Id;
             HttpResponseMessage response = api.Get(url);
-            List<VenueDto> venues = new List<VenueDto>();
-
             if (response.StatusCode == HttpStatusCode.OK)
-                venues = response.Content.ReadAsAsync<IEnumerable<VenueDto>>().Result.ToList();
+                agentVenuesFromTable = response.Content.ReadAsAsync<IEnumerable<AgentVenueAssociationDto>>().Result.ToList();
 
-            return View(venues);
+            if (!String.IsNullOrEmpty(Search))
+                agentVenuesFromTable = agentVenuesFromTable.Where(x =>
+                    general.getLowerStringForSearch(x.VenueDetail.Name).Contains(general.getLowerStringForSearch(Search)) ||
+                    general.getLowerStringForSearch(x.VenueDetail.Country).Contains(general.getLowerStringForSearch(Search))
+                ).ToList();
+
+            ViewData["title"] = "Team List";
+            ViewData["search"] = Search;
+
+            return View(agentVenuesFromTable);
         }
 
         // GET: Venue/Details/5
         public ActionResult Details(int id)
         {
-            string url = APIURL + "FindVenue/" + id;
+            api.GetApplicationCookie();
+            string url = APIURL2 + "FindAgentVenue/" + id;
 
             HttpResponseMessage response = api.Get(url);
-            VenueDto selectedVenue = new VenueDto();
+            AgentVenueAssociationDto selectedAgentVenue = new AgentVenueAssociationDto();
 
             if (response.StatusCode == HttpStatusCode.OK)
-                selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
+                selectedAgentVenue = response.Content.ReadAsAsync<AgentVenueAssociationDto>().Result;
 
             ViewData["title"] = "Venue Details";
-            return View(selectedVenue);
+            return View(selectedAgentVenue);
         }
         public ActionResult Error()
         {
@@ -69,21 +98,49 @@ namespace TMS.Controllers
         {
             try
             {
+                api.GetApplicationCookie();
+
                 string url = APIURL + "AddVenue";
+                string url1 = APIURL1 + "GetUserDetails/" + appUser.Id;
+                string url2 = APIURL2 + "AddAgentVenue";
+
+                UserDetailDto userDetails = new UserDetailDto();
+                HttpResponseMessage response1 = api.Get(url1);
+
+                if (response1.StatusCode == HttpStatusCode.OK)
+                    userDetails = response1.Content.ReadAsAsync<UserDetailDto>().Result;
 
                 Venue venue = new Venue()
                 {
                     Name = venueDto.Name,
-                    Id = venueDto.Id,
                     Country = venueDto.Country,
                     BasePrice = venueDto.BasePrice,
                     Location = venueDto.Location
                 };
 
                 HttpResponseMessage response = api.Post(url, venue);
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("/");
+                    Venue createdVenue = response.Content.ReadAsAsync<Venue>().Result;
+
+                    AgentVenuesAssosiation avAssosiation = new AgentVenuesAssosiation()
+                    {
+                        AgentId = userDetails.Id,
+                        VenueId = createdVenue.Id
+                    };
+
+
+                    HttpResponseMessage response2 = api.Post(url2, avAssosiation);
+
+                    if (response2.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("/");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Error");
+                    }
                 }
                 else
                 {
@@ -119,6 +176,8 @@ namespace TMS.Controllers
         {
             try 
             {
+                api.GetApplicationCookie();
+
                 string url = APIURL + "UpdateVenue/" + id;
 
                 Venue venue = new Venue()
@@ -133,7 +192,7 @@ namespace TMS.Controllers
                 HttpResponseMessage response = api.Post(url, venue);
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("/");
                 }
                 else
                 {
@@ -149,34 +208,44 @@ namespace TMS.Controllers
         // GET: Venue/Delete/5
         public ActionResult DeleteConfirm(int id)
         {
-            string url = APIURL + "FindVenue/" + id;
+            api.GetApplicationCookie();
+            string url = APIURL2 + "FindAgentVenue/" + id;
 
             HttpResponseMessage response = api.Get(url);
-            VenueDto selectedVenue = new VenueDto();
+            AgentVenueAssociationDto selectedAgentVenue = new AgentVenueAssociationDto();
 
             if (response.StatusCode == HttpStatusCode.OK)
-                selectedVenue = response.Content.ReadAsAsync<VenueDto>().Result;
+                selectedAgentVenue = response.Content.ReadAsAsync<AgentVenueAssociationDto>().Result;
 
             ViewData["title"] = "Delete Venue";
-            return View(selectedVenue);
+            return View(selectedAgentVenue);
         }
 
 
         // POST: Venue/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, AgentVenueAssociationDto agentVenue)
         {
             try
             {
                 // TODO: Add delete logic here
-                string url = APIURL + "DeleteVenue/" + id;
+                string url = APIURL + "DeleteVenue/" + agentVenue.VenueId;
+                string url1 = APIURL2 + "ReleaseAgentProperty/" + agentVenue.Id;
                 Object obj = new Object();
 
-                HttpResponseMessage response = api.Post(url, obj);
+                HttpResponseMessage response1 = api.Get(url1);
 
-                if (response.IsSuccessStatusCode)
+                if (response1.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("/");
+                    HttpResponseMessage response = api.Post(url, obj);
+                    if (response1.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("/");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Error");
+                    }
                 }
                 else
                 {

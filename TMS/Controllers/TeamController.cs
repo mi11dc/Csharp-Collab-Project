@@ -116,7 +116,6 @@ namespace TMS.Controllers
                 };
 
                 HttpResponseMessage response = api.Post(url, team);
-
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction(String.Concat("/"));
