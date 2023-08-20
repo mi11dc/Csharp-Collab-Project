@@ -1,0 +1,58 @@
+﻿@model TMS.Models.AgentVenueAssociationDto
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Venue</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VenueDetail.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VenueDetail.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VenueDetail.Country)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VenueDetail.Country)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VenueDetail.Location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VenueDetail.Location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VenueDetail.BasePrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VenueDetail.BasePrice)
+        </dd>
+
+        <dt>
+            Agent Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AgentDetail.FName) @Html.DisplayFor(model => model.AgentDetail.LName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.VenueDetail.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

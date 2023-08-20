@@ -1,0 +1,18 @@
+﻿@model TMS.Models.TeamPlayerDto
+@{
+    ViewBag.Title = "ReleasePlayer";
+}
+
+<h2>Release Player</h2>
+
+<div id="containershow">
+    <nav class="my-2">
+        <a class=" btn btn-secondary navlink" href="/Team/Details/@Model.TeamId">Cancel</a>
+    </nav>
+    <h2>Are you sure you want to release <strong>@Model.PlayerName</strong> from <strong>@Model.TeamName</strong>?</h2>
+    <p>This action cannot be undone.</p>
+    <form method="POST" action="/TeamPlayer/ReleaseTeamPlayer/@Model.Id?teamId=@Model.TeamId">
+        <input class="btn btn-danger" type="submit" value="Release PLayer" />
+    </form>
+</div>
+
